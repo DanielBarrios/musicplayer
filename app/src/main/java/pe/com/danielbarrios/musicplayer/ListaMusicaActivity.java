@@ -15,8 +15,6 @@ import java.util.HashMap;
 
 public class ListaMusicaActivity extends AppCompatActivity {
 
-    ArrayList<String> rutasMusica;
-    ArrayList<String> nombresMusica;
     final String MEDIA_PATH = Environment.getExternalStorageDirectory()
             .getPath() + "/";
     private ArrayList<HashMap<String, String>> songsList = new ArrayList();
@@ -32,8 +30,6 @@ public class ListaMusicaActivity extends AppCompatActivity {
     }
 
     private void inicializarVariables() {
-        rutasMusica = new ArrayList();
-        nombresMusica = new ArrayList();
         textViewListaMusica = ((TextView)findViewById(R.id.textoRutas));
     }
 
