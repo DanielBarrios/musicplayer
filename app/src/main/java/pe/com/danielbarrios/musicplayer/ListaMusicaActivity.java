@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,6 +21,8 @@ public class ListaMusicaActivity extends AppCompatActivity {
             .getPath() + "/";
     private ArrayList<HashMap<String, String>> songsList = new ArrayList();
     private String mp3Pattern = ".mp3";
+    private TextView textViewListaMusica;
+    String texto = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,7 @@ public class ListaMusicaActivity extends AppCompatActivity {
     private void inicializarVariables() {
         rutasMusica = new ArrayList();
         nombresMusica = new ArrayList();
+        textViewListaMusica = ((TextView)findViewById(R.id.textoRutas));
     }
 
     @Override
@@ -56,8 +60,10 @@ public class ListaMusicaActivity extends AppCompatActivity {
 
         for (HashMap<String,String> musica : songsList){
 
-            System.out.println("Titulo: " + musica.get("songTitle"));
-            System.out.println("Path: " + musica.get("songPath"));
+            texto = texto + "\n" +"Titulo: "+musica.get("songTitle")+ " ; Path: "+musica.get("songPath");
+            textViewListaMusica.setText(texto);
+            //System.out.println("Titulo: " + musica.get("songTitle"));
+            //System.out.println("Path: " + musica.get("songPath"));
 
 
         }
