@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_update_item"
-        android:title="Boton Update"
+        android:title="Boton Updatea"
         android:icon="@drawable/ico_update"
         app:showAsAction="ifRoom|withText" />
 
