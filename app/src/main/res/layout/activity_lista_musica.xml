@@ -10,12 +10,21 @@
     android:background="@color/colorBackgroundPrincipal"
     tools:context="pe.com.danielbarrios.musicplayer.ListaMusicaActivity">
 
-    <TextView
-        android:id="@+id/textoRutas"
-        android:textColor="@color/colorAccent"
-
-        android:textSize="15sp"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/textoRutas"
+            android:textColor="@android:color/background_light"
+
+            android:textSize="15sp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </ScrollView>
+
+
 
 </LinearLayout>
