@@ -1,6 +1,9 @@
 package pe.com.danielbarrios.musicplayer.view;
 
 import android.app.Activity;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -135,11 +139,29 @@ public class ListaMusicaActivity extends AppCompatActivity {
         AdapterView adapter = new AdapterView(this, R.layout.list_item_song,arrayListaCanciones.toArray());
         ListView listViewItems = (ListView)findViewById(R.id.list_view_lista_canciones);
         listViewItems.setAdapter(adapter);
-        listViewItems.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(android.widget.AdapterView<?> parent, View view, int position, long id) {
-                System.out.println("Elemento en posicion "+id);
-            }
-        });
+        listViewItems.setOnItemClickListener(mOnClickListener);
     }
+
+    android.widget.AdapterView.OnItemClickListener mOnClickListener = new android.widget.AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(android.widget.AdapterView<?> parent, View view, int position, long id) {
+            //play musica
+
+            try {
+            MediaPlayer mediaPlayer = new MediaPlayer();
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setDataSource(arrayListaCanciones.get(position).getRutaCancion());
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+
+                //https://developer.android.com/guide/topics/media/mediaplayer.html
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+
 }
