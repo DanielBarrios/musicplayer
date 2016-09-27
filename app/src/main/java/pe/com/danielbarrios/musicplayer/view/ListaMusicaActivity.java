@@ -34,6 +34,7 @@ public class ListaMusicaActivity extends AppCompatActivity {
     String texto = "";
     CancionBean[] listaCanciones = new CancionBean[20];
     int indice = 0;
+    MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,9 @@ public class ListaMusicaActivity extends AppCompatActivity {
     }
 
     private void inicializarVariables() {
+
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
     }
 
@@ -148,11 +152,14 @@ public class ListaMusicaActivity extends AppCompatActivity {
             //play musica
 
             try {
-            MediaPlayer mediaPlayer = new MediaPlayer();
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setDataSource(arrayListaCanciones.get(position).getRutaCancion());
-            mediaPlayer.prepare();
-            mediaPlayer.start();
+
+
+                if(mediaPlayer.isPlaying())
+                        mediaPlayer.stop();
+                mediaPlayer.setDataSource(arrayListaCanciones.get(position).getRutaCancion());
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+
 
                 //https://developer.android.com/guide/topics/media/mediaplayer.html
 
