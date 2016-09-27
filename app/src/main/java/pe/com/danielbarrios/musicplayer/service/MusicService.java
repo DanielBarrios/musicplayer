@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.util.Log;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         super.onCreate();
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         System.out.println("Entre a onCreate");
     }
 
@@ -51,6 +53,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     }
                     mediaPlayer = new MediaPlayer();
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                    mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
                     System.out.println("Ruta en intent extra: "+intent.getStringExtra("rutaCancion"));
                     mediaPlayer.setDataSource(intent.getStringExtra("rutaCancion"));
                     mediaPlayer.prepare();

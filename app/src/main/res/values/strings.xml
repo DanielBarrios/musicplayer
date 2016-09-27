@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">musicplayer</string>
     <string name="textoBotonPrincipalMiMusica">Mi Música</string>
+    <string name="title_activity_datos_musica">DatosMusicaActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>

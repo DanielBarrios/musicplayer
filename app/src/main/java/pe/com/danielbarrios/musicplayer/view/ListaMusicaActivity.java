@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
+import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -91,6 +92,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         traceFile = new File(((Context)this).getExternalFilesDir(null),Constantes.CONFIG_FILE_MUSIC);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         inicializarServicio();
     }
 
@@ -186,6 +188,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
 //                }
 //                mediaPlayer = new MediaPlayer();
 //                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//                mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 //                System.out.println("REPRODUCIENDO : " + arrayListaCanciones.get(position).getRutaCancion());
 //                mediaPlayer.setDataSource(arrayListaCanciones.get(position).getRutaCancion());
 //                mediaPlayer.prepare();
