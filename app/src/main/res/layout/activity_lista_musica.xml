@@ -8,7 +8,27 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@color/colorBackgroundPrincipal"
+    android:orientation="vertical"
     tools:context=".view.ListaMusicaActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/boton_pause"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="PAUSE"/>
+
+        <Button
+            android:id="@+id/boton_stop"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="STOP"/>
+
+    </LinearLayout>
 
     <ListView
             android:id="@+id/list_view_lista_canciones"

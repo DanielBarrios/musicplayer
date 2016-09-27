@@ -64,9 +64,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 break;
             case ACTION_STOP:
 
+                mediaPlayer.stop();
+                mediaPlayer.reset();
 
                 break;
             case ACTION_PAUSE:
+
+                if(mediaPlayer.isPlaying())
+                    mediaPlayer.pause();
+                else
+                    mediaPlayer.start();
 
                 break;
             default:
@@ -92,7 +99,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        Log.e(Constantes.TAG_LOG,"Error en el MediaPlayer Service");
+        Log.e(Constantes.TAG_LOG, "Error en el MediaPlayer Service");
         return false;
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mediaPlayer != null) mediaPlayer.release();
     }
 }

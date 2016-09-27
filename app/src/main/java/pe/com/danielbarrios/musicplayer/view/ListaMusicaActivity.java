@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -30,13 +31,15 @@ import pe.com.danielbarrios.musicplayer.bean.Constantes;
 import pe.com.danielbarrios.musicplayer.service.MusicService;
 import pe.com.danielbarrios.musicplayer.util.AdapterView;
 
-public class ListaMusicaActivity extends AppCompatActivity {
+public class ListaMusicaActivity extends AppCompatActivity implements View.OnClickListener {
 
     final String MEDIA_PATH = Environment.getExternalStorageDirectory().getPath() + "/";
     private String mp3Pattern = ".mp3";
     ArrayList<CancionBean> arrayListaCanciones = new ArrayList();
     MediaPlayer mediaPlayer;
     File traceFile;
+    Button boton_pause;
+    Button boton_stop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,10 @@ public class ListaMusicaActivity extends AppCompatActivity {
 
     private void inicializarVariables() {
 
+        boton_pause = (Button)findViewById(R.id.boton_pause);
+        boton_stop = (Button)findViewById(R.id.boton_stop);
+        boton_pause.setOnClickListener(this);
+        boton_stop.setOnClickListener(this);
         traceFile = new File(((Context)this).getExternalFilesDir(null),Constantes.CONFIG_FILE_MUSIC);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -203,6 +210,30 @@ public class ListaMusicaActivity extends AppCompatActivity {
             }
         }
     };
-        //TODO: ver donde hacer el stopService
+
+    @Override
+    public void onClick(View view) {
+
+        switch (view.getId()){
+
+            case R.id.boton_pause:
+
+                Intent intent = new Intent(ListaMusicaActivity.this, MusicService.class);
+                intent.setAction(MusicService.ACTION_PAUSE);
+                startService(intent);
+
+            break;
+
+            case R.id.boton_stop:
+
+                intent = new Intent(ListaMusicaActivity.this, MusicService.class);
+                intent.setAction(MusicService.ACTION_STOP);
+                startService(intent);
+
+            break;
+        }
+
+    }
+    //TODO: ver donde hacer el stopService
 
 }
