@@ -1,7 +1,9 @@
 package pe.com.danielbarrios.musicplayer.view;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaScannerConnection;
@@ -15,6 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
@@ -92,8 +97,9 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         traceFile = new File(((Context)this).getExternalFilesDir(null),Constantes.CONFIG_FILE_MUSIC);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+//        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         inicializarServicio();
+        setFilters();
     }
 
     public void inicializarServicio(){
@@ -188,7 +194,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
 //                }
 //                mediaPlayer = new MediaPlayer();
 //                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//                mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
+//                //mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
 //                System.out.println("REPRODUCIENDO : " + arrayListaCanciones.get(position).getRutaCancion());
 //                mediaPlayer.setDataSource(arrayListaCanciones.get(position).getRutaCancion());
 //                mediaPlayer.prepare();
@@ -237,6 +243,33 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         }
 
     }
-    //TODO: ver donde hacer el stopService
+
+    private BroadcastReceiver mAudioBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context ctx, Intent intent) {
+            if (intent.getAction().equals(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) { //Cuando el headset se desconecta
+                Intent intentBR = new Intent(ListaMusicaActivity.this, MusicService.class);
+                intentBR.setAction(MusicService.ACTION_STOP);
+                startService(intentBR);
+                Toast.makeText(getApplicationContext(), "Broadcast Noisy Reconocido ....", Toast.LENGTH_SHORT).show();
+            }else if(intent.getAction().equals(android.media.AudioManager.ACTION_HEADSET_PLUG)){
+                int state = intent.getIntExtra("state", -1);
+                if(state==0)
+                    Toast.makeText(getApplicationContext(), "DESCONECTADO HEADSET ....", Toast.LENGTH_SHORT).show();
+                else
+                    if(state==1)
+                        Toast.makeText(getApplicationContext(), "CONECTADO HEADSET ....", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    public void setFilters(){
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        filter.addAction(android.media.AudioManager.ACTION_HEADSET_PLUG);
+        registerReceiver(mAudioBroadcastReceiver, filter);
+    }
+
+    //TODO: ver donde hacer el stopService y unregister receiver
 
 }
