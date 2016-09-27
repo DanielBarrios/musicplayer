@@ -153,12 +153,23 @@ public class ListaMusicaActivity extends AppCompatActivity {
 
             try {
 
-
-                if(mediaPlayer.isPlaying())
-                        mediaPlayer.stop();
+                //https://www.tutorialspoint.com/android/android_mediaplayer.htm
+                if(mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                }
+                mediaPlayer = new MediaPlayer();
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                System.out.println("REPRODUCIENDO : " + arrayListaCanciones.get(position).getRutaCancion());
                 mediaPlayer.setDataSource(arrayListaCanciones.get(position).getRutaCancion());
                 mediaPlayer.prepare();
-                mediaPlayer.start();
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mediaPlayer) {
+                        mediaPlayer.start();
+                    }
+                });
+
 
 
                 //https://developer.android.com/guide/topics/media/mediaplayer.html
