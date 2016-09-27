@@ -8,22 +8,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@color/colorBackgroundPrincipal"
-    tools:context="pe.com.danielbarrios.musicplayer.ListaMusicaActivity">
+    tools:context=".view.ListaMusicaActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/textoRutas"
-            android:textColor="@android:color/background_light"
-
-            android:textSize="15sp"
+    <ListView
+            android:id="@+id/list_view_lista_canciones"
+            android:textColor="@android:color/white"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
 
-
-    </ScrollView>
 
 
 
