@@ -12,7 +12,7 @@
 
     <ListView
             android:id="@+id/list_view_lista_canciones"
-            android:textColor="@android:color/white"
+            android:background="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

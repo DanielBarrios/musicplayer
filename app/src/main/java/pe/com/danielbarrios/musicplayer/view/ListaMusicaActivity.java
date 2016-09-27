@@ -1,6 +1,7 @@
 package pe.com.danielbarrios.musicplayer.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaScannerConnection;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import pe.com.danielbarrios.musicplayer.R;
 import pe.com.danielbarrios.musicplayer.bean.CancionBean;
 import pe.com.danielbarrios.musicplayer.bean.Constantes;
+import pe.com.danielbarrios.musicplayer.service.MusicService;
 import pe.com.danielbarrios.musicplayer.util.AdapterView;
 
 public class ListaMusicaActivity extends AppCompatActivity {
@@ -82,7 +84,12 @@ public class ListaMusicaActivity extends AppCompatActivity {
         traceFile = new File(((Context)this).getExternalFilesDir(null),Constantes.CONFIG_FILE_MUSIC);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        inicializarServicio();
+    }
 
+    public void inicializarServicio(){
+        Intent intent = new Intent(ListaMusicaActivity.this, MusicService.class);
+        startService(intent);
     }
 
     @Override
@@ -166,32 +173,36 @@ public class ListaMusicaActivity extends AppCompatActivity {
             try {
 
                 //https://www.tutorialspoint.com/android/android_mediaplayer.htm
-                if(mediaPlayer.isPlaying()) {
-                    mediaPlayer.stop();
-                    mediaPlayer.reset();
-                }
-                mediaPlayer = new MediaPlayer();
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                System.out.println("REPRODUCIENDO : " + arrayListaCanciones.get(position).getRutaCancion());
-                mediaPlayer.setDataSource(arrayListaCanciones.get(position).getRutaCancion());
-                mediaPlayer.prepare();
-                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mediaPlayer) {
-                        mediaPlayer.start();
-                    }
-                });
+//                if(mediaPlayer.isPlaying()) {
+//                    mediaPlayer.stop();
+//                    mediaPlayer.reset();
+//                }
+//                mediaPlayer = new MediaPlayer();
+//                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//                System.out.println("REPRODUCIENDO : " + arrayListaCanciones.get(position).getRutaCancion());
+//                mediaPlayer.setDataSource(arrayListaCanciones.get(position).getRutaCancion());
+//                mediaPlayer.prepare();
+//                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+//                    @Override
+//                    public void onPrepared(MediaPlayer mediaPlayer) {
+//                        mediaPlayer.start();
+//                    }
+//                });
 
 
 
                 //https://developer.android.com/guide/topics/media/mediaplayer.html
 
+                Intent intent = new Intent(ListaMusicaActivity.this, MusicService.class);
+                intent.setAction(MusicService.ACTION_PLAY);
+                intent.putExtra("rutaCancion",arrayListaCanciones.get(position).getRutaCancion());
+                startService(intent);
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     };
-
+        //TODO: ver donde hacer el stopService
 
 }
