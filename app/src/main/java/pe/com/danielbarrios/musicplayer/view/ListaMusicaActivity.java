@@ -299,6 +299,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         Notification mNotification;
         mNotification = mBuilder.getNotification();
         notificationManager.notify(11, mNotification);
+        //http://www.viralandroid.com/2016/05/show-and-clear-android-notification-example.html
     }
 
     //TODO: ver donde hacer el stopService y unregister receiver
