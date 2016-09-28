@@ -1,5 +1,8 @@
 package pe.com.danielbarrios.musicplayer.view;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +11,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaScannerConnection;
 import android.os.Environment;
-import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,9 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
@@ -27,9 +27,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import pe.com.danielbarrios.musicplayer.R;
 import pe.com.danielbarrios.musicplayer.bean.CancionBean;
@@ -53,6 +51,13 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_lista_musica);
         inicializarVariables();
         validarDataInicial();
+        mostrarNotificacion();
+
+//        Bundle intent_extras = getIntent().getExtras();
+//        if (intent_extras != null && intent_extras.containsKey("valor_noti"))
+//        {
+//            System.out.println("VOLVEEEEEEEEEEEEEEEEE");   //Do the codes
+//        }
     }
 
     private void validarDataInicial() {
@@ -268,6 +273,32 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         filter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         filter.addAction(android.media.AudioManager.ACTION_HEADSET_PLUG);
         registerReceiver(mAudioBroadcastReceiver, filter);
+    }
+
+    public void mostrarNotificacion(){
+        PendingIntent mPendingIntent;
+        Intent intent = new Intent(this, ListaMusicaActivity.class);
+//        intent.putExtra("valor_noti", "aa");
+        mPendingIntent = PendingIntent.getActivity(getApplicationContext(), 1, intent, 0);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        Notification.Builder mBuilder = new Notification.Builder(getApplicationContext());
+
+        mBuilder.setAutoCancel(false);
+        mBuilder.setContentTitle("MusicPlayer");
+        mBuilder.setTicker("Reproduciendo música Ticker");
+        mBuilder.setContentText("Reproduciendo música");
+        mBuilder.setSmallIcon(R.drawable.notification_template_icon_bg);
+        mBuilder.setContentIntent(mPendingIntent);
+        mBuilder.setOngoing(true);
+        //API level 16
+//        mBuilder.setSubText("This is short description of android app notification");
+        mBuilder.setNumber(150);
+//        mBuilder.build();
+        Notification mNotification;
+        mNotification = mBuilder.getNotification();
+        notificationManager.notify(11, mNotification);
     }
 
     //TODO: ver donde hacer el stopService y unregister receiver
