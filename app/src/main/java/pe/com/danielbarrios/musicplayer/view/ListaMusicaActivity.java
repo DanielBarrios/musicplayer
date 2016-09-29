@@ -44,6 +44,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
     File traceFile;
     Button boton_pause;
     Button boton_stop;
+    NotificationManager notificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_lista_musica);
         inicializarVariables();
         validarDataInicial();
-        mostrarNotificacion();
+        //mostrarNotificacion();
 
 //        Bundle intent_extras = getIntent().getExtras();
 //        if (intent_extras != null && intent_extras.containsKey("valor_noti"))
@@ -218,6 +219,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 intent.setAction(MusicService.ACTION_PLAY);
                 intent.putExtra("rutaCancion",arrayListaCanciones.get(position).getRutaCancion());
                 startService(intent);
+                mostrarNotificacion(arrayListaCanciones.get(position).getNombreCancion());
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -236,6 +238,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 intent.setAction(MusicService.ACTION_PAUSE);
                 startService(intent);
 
+
             break;
 
             case R.id.boton_stop:
@@ -243,6 +246,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 intent = new Intent(ListaMusicaActivity.this, MusicService.class);
                 intent.setAction(MusicService.ACTION_STOP);
                 startService(intent);
+                desactivarNotificacion();
 
             break;
         }
@@ -275,21 +279,21 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         registerReceiver(mAudioBroadcastReceiver, filter);
     }
 
-    public void mostrarNotificacion(){
+    public void mostrarNotificacion(String nombreCancion){
         PendingIntent mPendingIntent;
         Intent intent = new Intent(this, ListaMusicaActivity.class);
 //        intent.putExtra("valor_noti", "aa");
         mPendingIntent = PendingIntent.getActivity(getApplicationContext(), 1, intent, 0);
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         Notification.Builder mBuilder = new Notification.Builder(getApplicationContext());
 
         mBuilder.setAutoCancel(false);
         mBuilder.setContentTitle("MusicPlayer");
-        mBuilder.setTicker("Reproduciendo música Ticker");
-        mBuilder.setContentText("Reproduciendo música");
-        mBuilder.setSmallIcon(R.drawable.notification_template_icon_bg);
+        mBuilder.setTicker("Reproduciendo: "+nombreCancion);
+        mBuilder.setContentText(nombreCancion);
+        mBuilder.setSmallIcon(R.drawable.ico_update);
         mBuilder.setContentIntent(mPendingIntent);
         mBuilder.setOngoing(true);
         //API level 16
@@ -300,6 +304,12 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         mNotification = mBuilder.getNotification();
         notificationManager.notify(11, mNotification);
         //http://www.viralandroid.com/2016/05/show-and-clear-android-notification-example.html
+
+    }
+
+    public void desactivarNotificacion(){
+        if(notificationManager!=null)
+            notificationManager.cancel(11);
     }
 
     //TODO: ver donde hacer el stopService y unregister receiver
