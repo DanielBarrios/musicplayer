@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaScannerConnection;
@@ -299,11 +300,14 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         //API level 16
 //        mBuilder.setSubText("This is short description of android app notification");
         mBuilder.setNumber(150);
+        mBuilder.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.ico_update));
 //        mBuilder.build();
         Notification mNotification;
         mNotification = mBuilder.getNotification();
         notificationManager.notify(11, mNotification);
         //http://www.viralandroid.com/2016/05/show-and-clear-android-notification-example.html
+        //click derecho en res, nuevo image asset, y en el combobox, elegir la opcion de icon bar.., tambien ver como se hace el icono de la app en launcher ( la grande)..
+        
 
     }
 
