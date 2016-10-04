@@ -18,6 +18,7 @@ import android.widget.TextView;
 import org.w3c.dom.Text;
 
 import pe.com.danielbarrios.musicplayer.R;
+import pe.com.danielbarrios.musicplayer.service.MusicService;
 
 public class DatosMusicaActivity extends ActionBarActivity {
 
@@ -36,14 +37,21 @@ public class DatosMusicaActivity extends ActionBarActivity {
         setFilters();
         textview_avance = (TextView)findViewById(R.id.textview_avance);
         textview_nombre_cancion = (TextView)findViewById(R.id.textview_nombre_cancion);
-        if(getIntent().getExtras()!=null)
-            nombreCancionActual = getIntent().getExtras().getString("nombreCancion")!= null ? getIntent().getExtras().getString("nombreCancion") : "";
-        textview_nombre_cancion.setText(nombreCancionActual);
+//        if(getIntent().getExtras()!=null)
+//            nombreCancionActual = getIntent().getExtras().getString("nombreCancion")!= null ? getIntent().getExtras().getString("nombreCancion") : "";
+//        textview_nombre_cancion.setText(nombreCancionActual);
         progressBar_musica = (ProgressBar)findViewById(R.id.progressBar);
-        progressBar_musica.setMax(100);
+//        progressBar_musica.setMax(100);
         progressBar_musica.setProgress(0);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nextScreen = false;
+        solicitarDuracion();
+    }
+
+    private void solicitarDuracion() {
+        Intent intent = new Intent(DatosMusicaActivity.this, MusicService.class);
+        intent.setAction(MusicService.REQUEST_DATA);
+        startService(intent);
     }
 
     @Override
@@ -75,12 +83,17 @@ public class DatosMusicaActivity extends ActionBarActivity {
         public void onReceive(Context context, Intent intent) {
 
             if(intent!=null)
+                System.out.println("ACTION: "+intent.getAction());
                 if(intent.getAction().equals(ACTION_AVANCE)){
                     int seconds = (intent.getIntExtra("avance",0))/1000;
                     textview_avance.setText(seconds+"");
                     progressBar_musica.setProgress(seconds);
                 }else if(intent.getAction().equals(ACTION_DURATION)){
-                    progressBar_musica.setMax(intent.getIntExtra("duracion",0)/1000);
+                    System.out.println("Entro action duration");
+                    progressBar_musica.setMax(intent.getIntExtra("duracion", 0) / 1000);
+                    nombreCancionActual = intent.getStringExtra("nombreCancion") != null ? intent.getStringExtra("nombreCancion") : "NO SETEADO";
+                    textview_nombre_cancion.setText(nombreCancionActual);
+                    System.out.println("Recuperado .... Nombre: "+nombreCancionActual + " ; Max:"+progressBar_musica.getMax());
                 }
 
         }
@@ -89,15 +102,18 @@ public class DatosMusicaActivity extends ActionBarActivity {
     public void setFilters(){
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_AVANCE);
+        filter.addAction(ACTION_DURATION);
         registerReceiver(mBroadcastReceiver, filter);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        System.out.println("ON STOP");
         if(!nombreCancionActual.equalsIgnoreCase("") && !nextScreen){
             mostrarNotificacion(nombreCancionActual);
-        }
+        }else
+            System.out.println("NO IF ... nombre:"+nombreCancionActual + " ; bool:"+nextScreen);
     }
 
     @Override

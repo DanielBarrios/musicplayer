@@ -38,7 +38,7 @@ import pe.com.danielbarrios.musicplayer.util.AdapterView;
 
 public class ListaMusicaActivity extends AppCompatActivity implements View.OnClickListener {
 
-    final String MEDIA_PATH = Environment.getExternalStorageDirectory().getPath() + "/";
+    final String MEDIA_PATH = Environment.getExternalStorageDirectory().getPath() + "/Music";  //defecto solo /, hubo un error
     private String mp3Pattern = ".mp3";
     ArrayList<CancionBean> arrayListaCanciones = new ArrayList();
     MediaPlayer mediaPlayer;
@@ -219,19 +219,23 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
 
 
                 //https://developer.android.com/guide/topics/media/mediaplayer.html
+                nextScreen = true;
+                Intent intentDatos = new Intent(ListaMusicaActivity.this, DatosMusicaActivity.class);
+//                intentDatos.putExtra("nombreCancion",nombreCancionActual);
+                startActivity(intentDatos);
+
+                nombreCancionActual = arrayListaCanciones.get(position).getNombreCancion();
 
                 Intent intent = new Intent(ListaMusicaActivity.this, MusicService.class);
                 intent.setAction(MusicService.ACTION_PLAY);
-                intent.putExtra("rutaCancion",arrayListaCanciones.get(position).getRutaCancion());
+                intent.putExtra("rutaCancion", arrayListaCanciones.get(position).getRutaCancion());
+                intent.putExtra("nombreCancion",nombreCancionActual);
                 startService(intent);
-                nombreCancionActual = arrayListaCanciones.get(position).getNombreCancion();
+
                 //mostrarNotificacion(arrayListaCanciones.get(position).getNombreCancion());
 
 
-                nextScreen = true;
-                Intent intentDatos = new Intent(ListaMusicaActivity.this, DatosMusicaActivity.class);
-                intentDatos.putExtra("nombreCancion",nombreCancionActual);
-                startActivity(intentDatos);
+
 
 
             } catch (Exception e) {

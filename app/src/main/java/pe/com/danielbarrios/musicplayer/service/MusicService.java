@@ -22,9 +22,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public static final String ACTION_PLAY = "pe.com.danielbarrios.musicplayer.PLAY";
     public static final String ACTION_PAUSE = "pe.com.danielbarrios.musicplayer.PAUSE";
     public static final String ACTION_STOP = "pe.com.danielbarrios.musicplayer.STOP";
+    public static final String REQUEST_DATA = "pe.com.danielbarrios.musicplayer.REQUEST_DATA";;
     MediaPlayer mediaPlayer;
     final Handler mHandler = new Handler();
     Runnable mRunnable = null;
+    String nombreCancionActual = "";
 
     @Override
     public void onCreate() {
@@ -58,7 +60,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     mediaPlayer = new MediaPlayer();
                     mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 //                    mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-                    System.out.println("Ruta en intent extra: "+intent.getStringExtra("rutaCancion"));
+//                    System.out.println("Ruta en intent extra: "+intent.getStringExtra("rutaCancion"));
+                    nombreCancionActual = intent.getStringExtra("nombreCancion");
                     mediaPlayer.setDataSource(intent.getStringExtra("rutaCancion"));
                     mediaPlayer.prepare();
                     mediaPlayer.setOnPreparedListener(this);
@@ -94,6 +97,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     enviarAvance();
                 }
                 break;
+
+            case REQUEST_DATA:
+
+                Intent intentInicia = new Intent(DatosMusicaActivity.ACTION_DURATION);
+                intentInicia.putExtra("duracion", mediaPlayer.getDuration());
+                intentInicia.putExtra("nombreCancion", nombreCancionActual);
+                System.out.println("Enviando inicia nombreCancioN: " + nombreCancionActual);
+                sendBroadcast(intentInicia);
+
+                break;
             default:
                 Log.i(Constantes.TAG_LOG,"Default case.");
                 break;
@@ -107,16 +120,29 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     public void enviarAvance(){
 
-        Intent intentInicia = new Intent(DatosMusicaActivity.ACTION_DURATION);
-        intentInicia.putExtra("duracion",mediaPlayer.getDuration());
-        sendBroadcast(intentInicia);
+//        Intent intentDatos = new Intent(getApplicationContext(), DatosMusicaActivity.class);
+//        intentDatos.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intentDatos.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        intentDatos.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        startActivity(intentDatos);
+
+//        Intent intentInicia = new Intent(DatosMusicaActivity.ACTION_DURATION);
+//        intentInicia.putExtra("duracion", mediaPlayer.getDuration());
+//        intentInicia.putExtra("nombreCancion", nombreCancionActual);
+//        System.out.println("Enviando inicia nombreCancioN: " + nombreCancionActual);
+//        sendBroadcast(intentInicia);
+
+
 
         mRunnable = new Runnable() {
             @Override
             public void run() {
+
+
                 Intent intent1 = new Intent(DatosMusicaActivity.ACTION_AVANCE);
                 intent1.putExtra("avance",mediaPlayer.getCurrentPosition());
                 sendBroadcast(intent1);
+                System.out.println("Enviando avance: " + mediaPlayer.getCurrentPosition());
                 mHandler.postDelayed(this,1000);
             }
         };
