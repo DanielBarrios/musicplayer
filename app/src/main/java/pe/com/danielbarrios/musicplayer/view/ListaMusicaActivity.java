@@ -38,6 +38,7 @@ import pe.com.danielbarrios.musicplayer.util.AdapterView;
 
 public class ListaMusicaActivity extends AppCompatActivity implements View.OnClickListener {
 
+    public static final String ACTION_RECIBE_NOMBRE_CANCION = "pe.com.danielbarrios.musicplayer.SONG_NAME";
     final String MEDIA_PATH = Environment.getExternalStorageDirectory().getPath() + "/Music";  //defecto solo /, hubo un error
     private String mp3Pattern = ".mp3";
     ArrayList<CancionBean> arrayListaCanciones = new ArrayList();
@@ -286,6 +287,9 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 else
                     if(state==1)
                         Toast.makeText(getApplicationContext(), "CONECTADO HEADSET ....", Toast.LENGTH_SHORT).show();
+            }else if(intent.getAction().equalsIgnoreCase(ACTION_RECIBE_NOMBRE_CANCION)){
+                nombreCancionActual = intent.getStringExtra("nombreCancion") != null ? intent.getStringExtra("nombreCancion") : "";
+                System.out.println("Recuperando nombreCancion: "+nombreCancionActual);
             }
         }
     };
@@ -294,14 +298,17 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         IntentFilter filter = new IntentFilter();
         filter.addAction(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         filter.addAction(android.media.AudioManager.ACTION_HEADSET_PLUG);
+        filter.addAction(ACTION_RECIBE_NOMBRE_CANCION);
         registerReceiver(mAudioBroadcastReceiver, filter);
     }
 
     public void mostrarNotificacion(String nombreCancion){
         PendingIntent mPendingIntent;
         Intent intent = new Intent(this, ListaMusicaActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                |Intent.FLAG_ACTIVITY_SINGLE_TOP);
 //        intent.putExtra("valor_noti", "aa");
-        mPendingIntent = PendingIntent.getActivity(getApplicationContext(), 1, intent, 0);
+        mPendingIntent = PendingIntent.getActivity(getApplicationContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
 
         //notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 

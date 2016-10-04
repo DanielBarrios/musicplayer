@@ -128,13 +128,18 @@ public class DatosMusicaActivity extends ActionBarActivity {
     public void onBackPressed() {
         super.onBackPressed();
         nextScreen = true;
+        Intent intentRegresar = new Intent(ListaMusicaActivity.ACTION_RECIBE_NOMBRE_CANCION);
+        intentRegresar.putExtra("nombreCancion",nombreCancionActual);
+        sendBroadcast(intentRegresar);
     }
 
     public void mostrarNotificacion(String nombreCancion){
         PendingIntent mPendingIntent;
         Intent intent = new Intent(this, DatosMusicaActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        |Intent.FLAG_ACTIVITY_SINGLE_TOP);
 //        intent.putExtra("valor_noti", "aa");
-        mPendingIntent = PendingIntent.getActivity(getApplicationContext(), 1, intent, 0);
+        mPendingIntent = PendingIntent.getActivity(getApplicationContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_ONE_SHOT);
 
         //notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
