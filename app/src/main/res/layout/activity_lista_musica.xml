@@ -28,6 +28,12 @@
             android:layout_height="50dp"
             android:text="STOP"/>
 
+        <Button
+            android:id="@+id/boton_cancion"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="Cancion"/>
+
     </LinearLayout>
 
     <ListView

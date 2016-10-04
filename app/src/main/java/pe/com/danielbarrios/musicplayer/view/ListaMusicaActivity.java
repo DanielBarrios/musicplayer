@@ -46,6 +46,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
     File traceFile;
     Button boton_pause;
     Button boton_stop;
+    Button boton_cancion;
     NotificationManager notificationManager;
     String nombreCancionActual="";
     boolean nextScreen = false;
@@ -102,8 +103,10 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
 
         boton_pause = (Button)findViewById(R.id.boton_pause);
         boton_stop = (Button)findViewById(R.id.boton_stop);
+        boton_cancion = (Button)findViewById(R.id.boton_cancion);
         boton_pause.setOnClickListener(this);
         boton_stop.setOnClickListener(this);
+        boton_cancion.setOnClickListener(this);
         traceFile = new File(((Context)this).getExternalFilesDir(null),Constantes.CONFIG_FILE_MUSIC);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mediaPlayer = new MediaPlayer();
@@ -268,6 +271,18 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 desactivarNotificacion();
 
             break;
+
+            case R.id.boton_cancion:
+
+                if(!nombreCancionActual.equalsIgnoreCase("")) {
+
+                    nextScreen = true;
+                    Intent intentDatos = new Intent(ListaMusicaActivity.this, DatosMusicaActivity.class);
+                    startActivity(intentDatos);
+
+                }
+
+                break;
         }
 
     }
