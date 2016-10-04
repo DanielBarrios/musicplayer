@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import pe.com.danielbarrios.musicplayer.R;
@@ -15,13 +16,18 @@ import pe.com.danielbarrios.musicplayer.R;
 public class DatosMusicaActivity extends ActionBarActivity {
 
     public static final String ACTION_AVANCE = "pe.com.danielbarrios.musicplayer.AVANCE";
+    public static final String ACTION_DURATION = "pe.com.danielbarrios.musicplayer.DURATION";
     TextView textview_avance;
+    ProgressBar progressBar_musica;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_datos_musica);
         setFilters();
         textview_avance = (TextView)findViewById(R.id.textview_avance);
+        progressBar_musica = (ProgressBar)findViewById(R.id.progressBar);
+        progressBar_musica.setMax(100);
+        progressBar_musica.setProgress(0);
     }
 
     @Override
@@ -54,7 +60,11 @@ public class DatosMusicaActivity extends ActionBarActivity {
 
             if(intent!=null)
                 if(intent.getAction().equals(ACTION_AVANCE)){
-                    textview_avance.setText(intent.getStringExtra("avance"));
+                    int seconds = (intent.getIntExtra("avance",0))/1000;
+                    textview_avance.setText(seconds+"");
+                    progressBar_musica.setProgress(seconds);
+                }else if(intent.getAction().equals(ACTION_DURATION)){
+                    progressBar_musica.setMax(intent.getIntExtra("duracion",0)/1000);
                 }
 
         }

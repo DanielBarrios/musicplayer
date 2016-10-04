@@ -106,17 +106,22 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     }
 
     public void enviarAvance(){
+
+        Intent intentInicia = new Intent(DatosMusicaActivity.ACTION_DURATION);
+        intentInicia.putExtra("duracion",mediaPlayer.getDuration());
+        sendBroadcast(intentInicia);
+
         mRunnable = new Runnable() {
             @Override
             public void run() {
                 Intent intent1 = new Intent(DatosMusicaActivity.ACTION_AVANCE);
                 intent1.putExtra("avance",mediaPlayer.getCurrentPosition());
                 sendBroadcast(intent1);
-                mHandler.post(this);
+                mHandler.postDelayed(this,1000);
             }
         };
 
-        mHandler.post(mRunnable);
+        mHandler.postDelayed(mRunnable,1000);
     }
 
     @Override
