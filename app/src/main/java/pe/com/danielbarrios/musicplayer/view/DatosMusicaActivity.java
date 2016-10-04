@@ -1,15 +1,21 @@
 package pe.com.danielbarrios.musicplayer.view;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import pe.com.danielbarrios.musicplayer.R;
 
@@ -18,16 +24,26 @@ public class DatosMusicaActivity extends ActionBarActivity {
     public static final String ACTION_AVANCE = "pe.com.danielbarrios.musicplayer.AVANCE";
     public static final String ACTION_DURATION = "pe.com.danielbarrios.musicplayer.DURATION";
     TextView textview_avance;
+    TextView textview_nombre_cancion;
     ProgressBar progressBar_musica;
+    NotificationManager notificationManager;
+    String nombreCancionActual  = "";
+    boolean nextScreen = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_datos_musica);
         setFilters();
         textview_avance = (TextView)findViewById(R.id.textview_avance);
+        textview_nombre_cancion = (TextView)findViewById(R.id.textview_nombre_cancion);
+        if(getIntent().getExtras()!=null)
+            nombreCancionActual = getIntent().getExtras().getString("nombreCancion")!= null ? getIntent().getExtras().getString("nombreCancion") : "";
+        textview_nombre_cancion.setText(nombreCancionActual);
         progressBar_musica = (ProgressBar)findViewById(R.id.progressBar);
         progressBar_musica.setMax(100);
         progressBar_musica.setProgress(0);
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nextScreen = false;
     }
 
     @Override
@@ -74,6 +90,64 @@ public class DatosMusicaActivity extends ActionBarActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_AVANCE);
         registerReceiver(mBroadcastReceiver, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(!nombreCancionActual.equalsIgnoreCase("") && !nextScreen){
+            mostrarNotificacion(nombreCancionActual);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        desactivarNotificacion();
+        nextScreen = false;
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        nextScreen = true;
+    }
+
+    public void mostrarNotificacion(String nombreCancion){
+        PendingIntent mPendingIntent;
+        Intent intent = new Intent(this, DatosMusicaActivity.class);
+//        intent.putExtra("valor_noti", "aa");
+        mPendingIntent = PendingIntent.getActivity(getApplicationContext(), 1, intent, 0);
+
+        //notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        Notification.Builder mBuilder = new Notification.Builder(getApplicationContext());
+
+        mBuilder.setAutoCancel(false);
+        mBuilder.setContentTitle("MusicPlayer");
+        mBuilder.setTicker("Reproduciendo: "+nombreCancion);
+        mBuilder.setContentText(nombreCancion);
+        mBuilder.setSmallIcon(R.drawable.ico_update);
+        mBuilder.setContentIntent(mPendingIntent);
+        mBuilder.setOngoing(true);
+        //API level 16
+//        mBuilder.setSubText("This is short description of android app notification");
+        mBuilder.setNumber(150);
+        mBuilder.setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.ico_update));
+//        mBuilder.build();
+        Notification mNotification;
+        mNotification = mBuilder.getNotification();
+        notificationManager.notify(11, mNotification);
+        //http://www.viralandroid.com/2016/05/show-and-clear-android-notification-example.html
+        //click derecho en res, nuevo image asset, y en el combobox, elegir la opcion de icon bar.., tambien ver como se hace el icono de la app en launcher ( la grande)..
+
+
+    }
+
+    public void desactivarNotificacion(){
+        if(notificationManager!=null)
+            notificationManager.cancel(11);
     }
 
 }

@@ -7,14 +7,22 @@
     tools:context="pe.com.danielbarrios.musicplayer.view.DatosMusicaActivity">
 
     <TextView
+        android:id="@+id/textview_nombre_cancion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NOMBRE DE CANCION"
+        android:layout_marginBottom="50dp"/>
+
+    <TextView
         android:id="@+id/textview_avance" android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"/>
 
     <ProgressBar android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp">
+        android:layout_marginTop="90dp">
 
     </ProgressBar>
 

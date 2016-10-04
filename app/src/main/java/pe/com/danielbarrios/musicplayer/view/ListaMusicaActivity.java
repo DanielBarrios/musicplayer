@@ -47,6 +47,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
     Button boton_stop;
     NotificationManager notificationManager;
     String nombreCancionActual="";
+    boolean nextScreen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +107,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        nextScreen = false;
 //        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         inicializarServicio();
         setFilters();
@@ -226,8 +228,11 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 //mostrarNotificacion(arrayListaCanciones.get(position).getNombreCancion());
 
 
+                nextScreen = true;
                 Intent intentDatos = new Intent(ListaMusicaActivity.this, DatosMusicaActivity.class);
+                intentDatos.putExtra("nombreCancion",nombreCancionActual);
                 startActivity(intentDatos);
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -333,7 +338,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onStop() {
         super.onStop();
-        if(!nombreCancionActual.equalsIgnoreCase("")){
+        if(!nombreCancionActual.equalsIgnoreCase("") && !nextScreen){
             mostrarNotificacion(nombreCancionActual);
         }
     }
@@ -342,7 +347,14 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
     protected void onResume() {
         super.onResume();
         desactivarNotificacion();
+        nextScreen = false;
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        nextScreen = true;
     }
 
     //TODO: ver donde hacer el stopService y unregister receiver
