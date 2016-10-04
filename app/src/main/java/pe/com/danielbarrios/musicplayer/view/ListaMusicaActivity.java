@@ -46,6 +46,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
     Button boton_pause;
     Button boton_stop;
     NotificationManager notificationManager;
+    String nombreCancionActual="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         boton_pause.setOnClickListener(this);
         boton_stop.setOnClickListener(this);
         traceFile = new File(((Context)this).getExternalFilesDir(null),Constantes.CONFIG_FILE_MUSIC);
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 //        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
@@ -220,7 +222,12 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 intent.setAction(MusicService.ACTION_PLAY);
                 intent.putExtra("rutaCancion",arrayListaCanciones.get(position).getRutaCancion());
                 startService(intent);
-                mostrarNotificacion(arrayListaCanciones.get(position).getNombreCancion());
+                nombreCancionActual = arrayListaCanciones.get(position).getNombreCancion();
+                //mostrarNotificacion(arrayListaCanciones.get(position).getNombreCancion());
+
+
+                Intent intentDatos = new Intent(ListaMusicaActivity.this, DatosMusicaActivity.class);
+                startActivity(intentDatos);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -247,6 +254,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 intent = new Intent(ListaMusicaActivity.this, MusicService.class);
                 intent.setAction(MusicService.ACTION_STOP);
                 startService(intent);
+                nombreCancionActual="";
                 desactivarNotificacion();
 
             break;
@@ -286,7 +294,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
 //        intent.putExtra("valor_noti", "aa");
         mPendingIntent = PendingIntent.getActivity(getApplicationContext(), 1, intent, 0);
 
-        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        //notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         Notification.Builder mBuilder = new Notification.Builder(getApplicationContext());
 
@@ -314,6 +322,27 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
     public void desactivarNotificacion(){
         if(notificationManager!=null)
             notificationManager.cancel(11);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //desactivarNotificacion();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(!nombreCancionActual.equalsIgnoreCase("")){
+            mostrarNotificacion(nombreCancionActual);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        desactivarNotificacion();
+
     }
 
     //TODO: ver donde hacer el stopService y unregister receiver

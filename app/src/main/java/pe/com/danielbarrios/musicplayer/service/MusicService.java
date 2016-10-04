@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.util.Log;
 import java.io.IOException;
 
 import pe.com.danielbarrios.musicplayer.bean.Constantes;
+import pe.com.danielbarrios.musicplayer.view.DatosMusicaActivity;
 
 /**
  * Created by DBarrios on 27/09/2016.
@@ -21,6 +23,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public static final String ACTION_PAUSE = "pe.com.danielbarrios.musicplayer.PAUSE";
     public static final String ACTION_STOP = "pe.com.danielbarrios.musicplayer.STOP";
     MediaPlayer mediaPlayer;
+    final Handler mHandler = new Handler();
+    Runnable mRunnable = null;
 
     @Override
     public void onCreate() {
@@ -59,6 +63,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     mediaPlayer.prepare();
                     mediaPlayer.setOnPreparedListener(this);
 
+                    enviarAvance();
+
+
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -70,14 +79,20 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 mediaPlayer.stop();
                 mediaPlayer.reset();
 
+                if(mHandler!=null && mRunnable!=null)
+                    mHandler.removeCallbacks(mRunnable);
+
                 break;
             case ACTION_PAUSE:
 
-                if(mediaPlayer.isPlaying())
+                if(mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
-                else
+                    if(mHandler!=null && mRunnable!=null)
+                        mHandler.removeCallbacks(mRunnable);
+                }else {
                     mediaPlayer.start();
-
+                    enviarAvance();
+                }
                 break;
             default:
                 Log.i(Constantes.TAG_LOG,"Default case.");
@@ -88,6 +103,20 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         }
 
 
+    }
+
+    public void enviarAvance(){
+        mRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Intent intent1 = new Intent(DatosMusicaActivity.ACTION_AVANCE);
+                intent1.putExtra("avance",mediaPlayer.getCurrentPosition());
+                sendBroadcast(intent1);
+                mHandler.post(this);
+            }
+        };
+
+        mHandler.post(mRunnable);
     }
 
     @Override
