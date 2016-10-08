@@ -50,6 +50,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
     NotificationManager notificationManager;
     String nombreCancionActual="";
     boolean nextScreen = false;
+    boolean isPaused = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +113,8 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
         mediaPlayer = new MediaPlayer();
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         nextScreen = false;
+        isPaused = getIntent().getExtras() != null ? getIntent().getExtras().getBoolean("pause",true) : true;
+        cambiarTextoBotonPausePlay();
 //        mediaPlayer.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         inicializarServicio();
         setFilters();
@@ -225,6 +228,8 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 //https://developer.android.com/guide/topics/media/mediaplayer.html
                 nextScreen = true;
                 Intent intentDatos = new Intent(ListaMusicaActivity.this, DatosMusicaActivity.class);
+                isPaused = false;
+                intentDatos.putExtra("pause",isPaused);
 //                intentDatos.putExtra("nombreCancion",nombreCancionActual);
                 startActivity(intentDatos);
 
@@ -258,7 +263,11 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 Intent intent = new Intent(ListaMusicaActivity.this, MusicService.class);
                 intent.setAction(MusicService.ACTION_PAUSE);
                 startService(intent);
-
+                if(isPaused)
+                    isPaused = false;
+                else
+                    isPaused = true;
+                cambiarTextoBotonPausePlay();
 
             break;
 
@@ -268,8 +277,9 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                 intent.setAction(MusicService.ACTION_STOP);
                 startService(intent);
                 nombreCancionActual="";
+                isPaused = true;
                 desactivarNotificacion();
-
+                cambiarTextoBotonPausePlay();
             break;
 
             case R.id.boton_cancion:
@@ -278,6 +288,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
 
                     nextScreen = true;
                     Intent intentDatos = new Intent(ListaMusicaActivity.this, DatosMusicaActivity.class);
+                    intentDatos.putExtra("pause",isPaused);
                     startActivity(intentDatos);
 
                 }
@@ -304,6 +315,8 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
                         Toast.makeText(getApplicationContext(), "CONECTADO HEADSET ....", Toast.LENGTH_SHORT).show();
             }else if(intent.getAction().equalsIgnoreCase(ACTION_RECIBE_NOMBRE_CANCION)){
                 nombreCancionActual = intent.getStringExtra("nombreCancion") != null ? intent.getStringExtra("nombreCancion") : "";
+                isPaused = intent.getBooleanExtra("pause",true);
+                cambiarTextoBotonPausePlay();
                 System.out.println("Recuperando nombreCancion: "+nombreCancionActual);
             }
         }
@@ -364,7 +377,7 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onStop() {
         super.onStop();
-        if(!nombreCancionActual.equalsIgnoreCase("") && !nextScreen){
+        if(!nombreCancionActual.equalsIgnoreCase("") && !nextScreen && !isPaused){
             mostrarNotificacion(nombreCancionActual);
         }
     }
@@ -381,6 +394,13 @@ public class ListaMusicaActivity extends AppCompatActivity implements View.OnCli
     public void onBackPressed() {
         super.onBackPressed();
         nextScreen = true;
+    }
+
+    public void cambiarTextoBotonPausePlay(){
+        if(isPaused)
+            boton_pause.setText("PLAY");
+        else
+            boton_pause.setText("PAUSE");
     }
 
     //TODO: ver donde hacer el stopService y unregister receiver

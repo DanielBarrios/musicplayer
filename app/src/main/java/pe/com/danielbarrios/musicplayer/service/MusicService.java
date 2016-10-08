@@ -27,6 +27,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     final Handler mHandler = new Handler();
     Runnable mRunnable = null;
     String nombreCancionActual = "";
+    boolean isReset = false;
 
     @Override
     public void onCreate() {
@@ -65,7 +66,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                     mediaPlayer.setDataSource(intent.getStringExtra("rutaCancion"));
                     mediaPlayer.prepare();
                     mediaPlayer.setOnPreparedListener(this);
-
+                    isReset = false;
                     enviarAvance();
 
 
@@ -81,6 +82,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
                 mediaPlayer.stop();
                 mediaPlayer.reset();
+                isReset = true;
 
                 if(mHandler!=null && mRunnable!=null)
                     mHandler.removeCallbacks(mRunnable);
@@ -88,13 +90,15 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
                 break;
             case ACTION_PAUSE:
 
-                if(mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
-                    if(mHandler!=null && mRunnable!=null)
-                        mHandler.removeCallbacks(mRunnable);
-                }else {
-                    mediaPlayer.start();
-                    enviarAvance();
+                if(!isReset) {
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                        if (mHandler != null && mRunnable != null)
+                            mHandler.removeCallbacks(mRunnable);
+                    } else {
+                        mediaPlayer.start();
+                        enviarAvance();
+                    }
                 }
                 break;
 
